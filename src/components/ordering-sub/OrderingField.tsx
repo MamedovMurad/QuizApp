@@ -7,6 +7,7 @@ interface OrderingFieldProps {
   onChange?: (val: Option[]) => void;
   available: Option[];
   setAvailable: (val: Option[]) => void;
+  selectionLimit?: number;
 }
 
 export default function OrderingField({
@@ -14,6 +15,7 @@ export default function OrderingField({
   onChange,
   available,
   setAvailable,
+  selectionLimit,
 }: OrderingFieldProps) {
   const [draggingId, setDraggingId] = useState<string | null>(null);
 
@@ -44,6 +46,8 @@ export default function OrderingField({
       onChange?.(value.filter((item) => item.id.toString() !== draggingId));
       setAvailable([...available, fromOrdered]);
     } else if (dropTarget === "ordered" && fromAvailable) {
+      if (selectionLimit && value.length >= selectionLimit) return;
+
       setAvailable(available.filter((item) => item.id.toString() !== draggingId));
       onChange?.([...value, fromAvailable]);
     }
@@ -111,7 +115,14 @@ export default function OrderingField({
             {text}
           </div>
         ))}
+
+        {selectionLimit && value.length >= selectionLimit && (
+          <p style={{ color: "red", marginTop: 10 }}>
+            Maksimum {selectionLimit} seçim icazəlidir.
+          </p>
+        )}
       </div>
     </div>
   );
 }
+

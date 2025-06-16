@@ -29,6 +29,7 @@ export interface Question {
   options?: Option[];    // For "single", "multiple", maybe "yesno"
   lines?: YesNoLine[];   // For "yesno" type
   blanks?: Blank[];      // For "blanks" type
+  selection_limit?:number
 }
 
 export interface PaginatedResponse<T> {

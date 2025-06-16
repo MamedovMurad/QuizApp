@@ -19,6 +19,7 @@ export default function OrderingQuestion({ question }: { question: Question }) {
         rules={[{ required: true, message: "Zəhmət olmasa sıralama edin." }]}
       >
         <OrderingField
+        selectionLimit={question.selection_limit}
           available={available}
           setAvailable={setAvailable}
         />

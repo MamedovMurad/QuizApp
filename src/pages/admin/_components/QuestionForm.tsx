@@ -17,35 +17,36 @@ import { OrderingField } from './question-fields/OrderingField';
 import { createQuiz, getGroups } from '../../../api/quiz';
 
 const { Option } = Select;
-const questionTypes = ['single', 'multiple', 'blanks', 'ordering', "yesno"];
+const questionTypes = ['single', 'multiple', 'blanks', 'ordering', "yesno","dragdrop"];
 
-export const QuestionForm = ({ id }: { id: any }) => {
+function appendFormData(formData: FormData, data: any, rootKey = '') {
+  if (data instanceof File) {
+    formData.append(rootKey, data);
+  } else if (Array.isArray(data)) {
+    data.forEach((item, index) => {
+      const key = rootKey ? `${rootKey}[${index}]` : `${index}`;
+      appendFormData(formData, item, key);
+    });
+  } else if (data !== null && typeof data === 'object') {
+    Object.entries(data).forEach(([key, value]) => {
+      const formKey = rootKey ? `${rootKey}[${key}]` : key;
+      appendFormData(formData, value, formKey);
+    });
+  } else if (typeof data === 'boolean') {
+    // boolean dəyərləri 1 / 0 kimi əlavə et
+    formData.append(rootKey, data ? '1' : '0');
+  } else if (data !== undefined && data !== null) {
+    formData.append(rootKey, String(data));
+  }
+}
+
+
+export const QuestionForm = ({id}:{id:any}) => {
   const [form] = Form.useForm();
   const [questionType, setQuestionType] = useState('');
   const [groups, setgroups] = useState<any>(null);
 
   const questionText = useWatch('text', form); // 👈 burada sualı izləyirik
-  function appendFormData(formData: FormData, data: any, rootKey = '') {
-    if (data instanceof File) {
-      // Fayl gəlibsə
-      formData.append(rootKey, data);
-    } else if (Array.isArray(data)) {
-      data.forEach((item, index) => {
-        // Array üçün açar: field[index] və rekursiv
-        const key = rootKey ? `${rootKey}[${index}]` : `${index}`;
-        appendFormData(formData, item, key);
-      });
-    } else if (data !== null && typeof data === 'object') {
-      Object.entries(data).forEach(([key, value]) => {
-        // Object üçün açar: rootKey[key]
-        const formKey = rootKey ? `${rootKey}[${key}]` : key;
-        appendFormData(formData, value, formKey);
-      });
-    } else if (data !== undefined) {
-      // Sadə tip üçün append
-      formData.append(rootKey, String(data));
-    }
-  }
 
 const onFinish = (values: any) => {
   const formData = new FormData();
@@ -74,9 +75,8 @@ const onFinish = (values: any) => {
 
 
 
-
   useEffect(() => {
-    getGroups().then((data) => {
+    getGroups().then((data)=>{
       setgroups(data.data)
     })
   }, []);
@@ -116,7 +116,7 @@ const onFinish = (values: any) => {
 
         <Form.Item name="group_id" label="Kateqoriya" rules={[{ required: true }]}>
           <Select >
-            {groups?.map((type: any) => (
+            {groups?.map((type:any) => (
               <Option key={type.id} value={type.id}>
                 {type.title}
               </Option>

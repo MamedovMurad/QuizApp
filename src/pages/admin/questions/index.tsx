@@ -93,7 +93,10 @@ const Questions: React.FC = () => {
                     </Link>
                     <Popconfirm
                         title="Silmək istədiyinizə əminsiniz?"
-                        onConfirm={() => message.info(`Silinəcək: ${record.text}`)}
+                        onConfirm={() => {
+                            
+                            message.info(`Silinəcək: ${record.text}`)
+                        }}
                         okText="Bəli"
                         cancelText="Xeyr"
                     >

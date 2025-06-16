@@ -14,6 +14,7 @@ interface QuestionItem {
   correct_answer: string[];
   your_answer: string[];
   correct: boolean;
+  group: string; // Group sahəsi əlavə olundu
 }
 
 interface ResultStatsChartProps {
@@ -25,19 +26,22 @@ export default function ResultStatsChart({
   details,
   calculatePartialPoint,
 }: ResultStatsChartProps) {
-  const typeStats: Record<string, { type: string; total: number; earned: number }> = {};
+  // Group-a görə statistikalar
+  const groupStats: Record<string, { group: string; total: number; earned: number }> = {};
 
   details.forEach((item) => {
     const score = calculatePartialPoint(item);
-    if (!typeStats[item.type]) {
-      typeStats[item.type] = { type: item.type, total: 0, earned: 0 };
+    const group = item.group || 'Other'; // fallback əgər group gəlməsə
+
+    if (!groupStats[group]) {
+      groupStats[group] = { group, total: 0, earned: 0 };
     }
-    typeStats[item.type].total += item.point;
-    typeStats[item.type].earned += score;
+    groupStats[group].total += item.point;
+    groupStats[group].earned += score;
   });
 
-  const chartData = Object.values(typeStats).map((stat) => ({
-    type: stat.type,
+  const chartData = Object.values(groupStats).map((stat) => ({
+    group: stat.group,
     percent: +((stat.earned / stat.total) * 100).toFixed(1),
   }));
 
@@ -65,7 +69,7 @@ export default function ResultStatsChart({
               domain={[0, 100]}
               tickFormatter={(v) => `${v}%`}
             />
-            <YAxis type="category" dataKey="type" />
+            <YAxis type="category" dataKey="group" />
             <Tooltip formatter={(value: any) => `${value}% correct`} />
             <Bar dataKey="percent" fill="#3b82f6">
               {chartData.map((_, index) => (
