@@ -1,28 +1,34 @@
-import { lazy, Suspense } from "react";
-import { createBrowserRouter, createRoutesFromElements, Route } from "react-router-dom";
-import PrivateRoute from "./PrivateRoute";
+import { lazy, Suspense } from 'react';
+import { createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom';
+import PrivateRoute from './PrivateRoute';
 
-// Bütün komponentləri lazy import et
-const MainLayout = lazy(() => import("../containers/layouts/MainLayout"));
-const CreateQuestion = lazy(() => import("../pages/admin/questions/create-question"));
+// Wrapper
+const SuspenseWrapper = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<div>Yüklənir...</div>}>{children}</Suspense>
+);
+
+// Lazy load pages
+const MainLayout = lazy(() => import('../containers/layouts/MainLayout'));
+const CreateQuestion = lazy(() => import('../pages/admin/questions/create-question'));
 const StoreQuestion = lazy(() =>
-  import("../pages/admin/questions/create-question").then(mod => ({ default: mod.StoreQuestion }))
+  import('../pages/admin/questions/create-question').then((mod) => {
+    if (!mod.StoreQuestion) throw new Error('StoreQuestion tapılmadı!');
+    return { default: mod.StoreQuestion };
+  })
 );
-const Questions = lazy(() => import("../pages/admin/questions"));
+const Questions = lazy(() => import('../pages/admin/questions'));
 const EditQuestionEditForm = lazy(() =>
-  import("../pages/admin/questions/edit-question/QuestionForm").then(mod => ({ default: mod.EditQuestionEditForm }))
+  import('../pages/admin/questions/edit-question/QuestionForm').then((mod) => {
+    if (!mod.EditQuestionEditForm) throw new Error('EditQuestionEditForm tapılmadı!');
+    return { default: mod.EditQuestionEditForm };
+  })
 );
-const GroupList = lazy(() => import("../pages/admin/group"));
-
-const LoginPage = lazy(() => import("../pages/login"));
-const HomePage = lazy(() => import("../pages/home"));
-const QuizPage = lazy(() => import("../pages/quiz"));
-const ExamResultsPage = lazy(() => import("../pages/exam-results"));
-const ResultDetailPage = lazy(() => import("../pages/exam-results/detail"));
-
-function SuspenseWrapper({ children }: { children: React.ReactNode }) {
-  return <Suspense fallback={<div>Yüklənir...</div>}>{children}</Suspense>;
-}
+const GroupList = lazy(() => import('../pages/admin/group'));
+const LoginPage = lazy(() => import('../pages/login'));
+const HomePage = lazy(() => import('../pages/home'));
+const QuizPage = lazy(() => import('../pages/quiz'));
+const ExamResultsPage = lazy(() => import('../pages/exam-results'));
+const ResultDetailPage = lazy(() => import('../pages/exam-results/detail'));
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -76,7 +82,7 @@ export const router = createBrowserRouter(
             }
           />
           <Route
-            path="admin/quiz/list"
+            path="/admin/quiz/list"
             element={
               <SuspenseWrapper>
                 <Questions />
@@ -84,7 +90,7 @@ export const router = createBrowserRouter(
             }
           />
           <Route
-            path="admin/quiz/create"
+            path="/admin/quiz/create"
             element={
               <SuspenseWrapper>
                 <CreateQuestion />
@@ -92,7 +98,7 @@ export const router = createBrowserRouter(
             }
           />
           <Route
-            path="admin/quiz/create/:id"
+            path="/admin/quiz/create/:id"
             element={
               <SuspenseWrapper>
                 <StoreQuestion />
@@ -100,7 +106,7 @@ export const router = createBrowserRouter(
             }
           />
           <Route
-            path="admin/quiz/edit/:id"
+            path="/admin/quiz/edit/:id"
             element={
               <SuspenseWrapper>
                 <EditQuestionEditForm />
@@ -108,7 +114,7 @@ export const router = createBrowserRouter(
             }
           />
           <Route
-            path="admin/groups"
+            path="/admin/groups"
             element={
               <SuspenseWrapper>
                 <GroupList />
