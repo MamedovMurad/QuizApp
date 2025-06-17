@@ -1,10 +1,11 @@
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom';
 import PrivateRoute from './PrivateRoute';
+import { Spin } from 'antd';
 
 // Wrapper
 const SuspenseWrapper = ({ children }: { children: React.ReactNode }) => (
-  <Suspense fallback={<div>Yüklənir...</div>}>{children}</Suspense>
+  <Suspense fallback={<div className=' h-full w-full flex justify-center items-center'><Spin size='large'/></div>}>{children}</Suspense>
 );
 
 // Lazy load pages

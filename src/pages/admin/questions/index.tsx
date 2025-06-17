@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Space, Table, Tag, Button, message, Popconfirm } from 'antd';
 import type { TablePaginationConfig, TableProps } from 'antd';
 import { Link } from 'react-router-dom';
-import { getAllQuizes } from '../../../api/quiz';
+import { deleteQuiz, getAllQuizes } from '../../../api/quiz';
 import type { PaginatedResponse, QuestionResponse } from '../../../models/quiz';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
@@ -94,7 +94,11 @@ const Questions: React.FC = () => {
                     <Popconfirm
                         title="Silmək istədiyinizə əminsiniz?"
                         onConfirm={() => {
-                            
+                            deleteQuiz(record.id).then(() => {
+                                fetchData()
+                                message.info(`Silindi: ${record.text}`)
+                            })
+
                             message.info(`Silinəcək: ${record.text}`)
                         }}
                         okText="Bəli"
