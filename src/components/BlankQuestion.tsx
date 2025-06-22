@@ -17,11 +17,11 @@ export default function BlankQuestion({ question }: { question: Question }) {
             <Form.Item
               name={[`answer_${question.id}`,""+question.blanks[index].id]}
     
-              style={{ display: "inline-block", margin: "0 8px", width: 120 }}
+              style={{ display: "inline-block", margin: "0 8px", width: "100%" }}
             >
-              <Select placeholder="Select...">
+              <Select placeholder="Select..." className=" w-full block">
                 {question.blanks[index].options.map((opt) => (
-                  <Select.Option key={opt.id} value={opt.id}>
+                  <Select.Option key={opt.id} value={opt.id} >
                     {opt.text}
                   </Select.Option>
                 ))}

@@ -6,6 +6,7 @@ import PricingPage from '../pages/pricing';
 import PricingList from '../pages/admin/pricing';
 import PaymentSuccess from '../pages/payment/PaymentSuccess';
 import PaymentFailed from '../pages/payment/PaymentFailed';
+import { EditQuestionEditForm } from '../pages/admin/questions/edit-question/QuestionForm';
 
 // Wrapper
 const SuspenseWrapper = ({ children }: { children: React.ReactNode }) => (
@@ -22,12 +23,7 @@ const StoreQuestion = lazy(() =>
   })
 );
 const Questions = lazy(() => import('../pages/admin/questions'));
-const EditQuestionEditForm = lazy(() =>
-  import('../pages/admin/questions/edit-question/QuestionForm').then((mod) => {
-    if (!mod.EditQuestionEditForm) throw new Error('EditQuestionEditForm tapılmadı!');
-    return { default: mod.EditQuestionEditForm };
-  })
-);
+
 const GroupList = lazy(() => import('../pages/admin/group'));
 const LoginPage = lazy(() => import('../pages/login'));
 const HomePage = lazy(() => import('../pages/home'));
