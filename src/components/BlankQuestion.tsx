@@ -10,7 +10,7 @@ export default function BlankQuestion({ question }: { question: Question }) {
 <div className=" min-h-[248px]">
       <Paragraph>
       {parts.map((part, index) => (
-        <span key={index}>
+        <span key={index} >
           {part}
           {/* Only render a blank if it exists for this position */}
           {question.blanks && index < question.blanks.length && (

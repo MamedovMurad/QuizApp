@@ -18,20 +18,35 @@ interface BlanksFieldProps {
 
 export const DragDropField = ({ text }: BlanksFieldProps) => {
   const form = Form.useFormInstance();
-  const blankCount = (text.match(/___/g) || []).length;
 
-  // blank-ları yarat
   useEffect(() => {
-    if (blankCount > 0) {
-      const blanks = Array.from({ length: blankCount }).map(() => ({
-        options: [],
-        correct_answer: null,
-      }));
-      form.setFieldsValue({ blanks });
-    } else {
-      form.setFieldsValue({ blanks: [] });
+    if (!text) return;
+
+    const blankCount = (text.match(/___/g) || []).length;
+
+    const existingBlanks = form.getFieldValue('blanks') || [];
+
+    // Əgər backend-dən gələn datada options artıq varsa — bir daha set etməyə ehtiyac yoxdur
+    const hasExistingOptions = existingBlanks.every(
+      (blank: any) => Array.isArray(blank?.options) && blank.options.length > 0
+    );
+
+    // Əgər uyğun sayda blank və options varsa — heç nə etmirik
+    if (
+      existingBlanks.length === blankCount &&
+      hasExistingOptions
+    ) {
+      return;
     }
-  }, [blankCount, form]);
+
+    // Əks halda yeni blank sahələri yaradılır
+    const blanks = Array.from({ length: blankCount }).map(() => ({
+      options: [],
+      correct_answer: null,
+    }));
+
+    form.setFieldsValue({ blanks });
+  }, [text, form]);
 
   return (
     <>
