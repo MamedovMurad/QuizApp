@@ -106,7 +106,10 @@ const onSubmit = async () => {
       {
         currentQuestion?.image&& <div><img className=" object-contain w-full max-h-[300px] rounded-2xl" src={currentQuestion?.image} alt="" /></div>
       }
-       <Paragraph>{currentQuestion?.text}</Paragraph>
+      {
+        currentQuestion.type!=="blanks"&& <Paragraph >{currentQuestion?.text}</Paragraph>
+      }
+      
       <Form
         form={form}
         layout="vertical"
