@@ -2,10 +2,14 @@ import { lazy, Suspense } from 'react';
 import { createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom';
 import PrivateRoute from './PrivateRoute';
 import { Spin } from 'antd';
+import PricingPage from '../pages/pricing';
+import PricingList from '../pages/admin/pricing';
+import PaymentSuccess from '../pages/payment/PaymentSuccess';
+import PaymentFailed from '../pages/payment/PaymentFailed';
 
 // Wrapper
 const SuspenseWrapper = ({ children }: { children: React.ReactNode }) => (
-  <Suspense fallback={<div className=' h-full w-full flex justify-center items-center'><Spin size='large'/></div>}>{children}</Suspense>
+  <Suspense fallback={<div className=' h-full w-full flex justify-center items-center'><Spin size='large' /></div>}>{children}</Suspense>
 );
 
 // Lazy load pages
@@ -59,6 +63,14 @@ export const router = createBrowserRouter(
           }
         >
           <Route
+            path="/pricing"
+            element={
+              <SuspenseWrapper>
+                <PricingPage />
+              </SuspenseWrapper>
+            }
+          />
+          <Route
             path="/"
             element={
               <SuspenseWrapper>
@@ -82,6 +94,42 @@ export const router = createBrowserRouter(
               </SuspenseWrapper>
             }
           />
+
+          <Route
+            path="/payment/success/message"
+            element={
+              <SuspenseWrapper>
+                <PaymentSuccess />
+              </SuspenseWrapper>
+            }
+          />
+          <Route
+            path="/payment/failed/message"
+            element={
+              <SuspenseWrapper>
+                <PaymentFailed />
+              </SuspenseWrapper>
+            }
+          />
+        </Route>
+
+
+
+
+
+      </Route>
+
+
+      {/* admin section */}
+      <Route
+        element={
+          <SuspenseWrapper>
+            <MainLayout />
+          </SuspenseWrapper>
+        }
+      >
+
+        <Route element={<PrivateRoute role='admin' />}>
           <Route
             path="/admin/quiz/list"
             element={
@@ -119,6 +167,14 @@ export const router = createBrowserRouter(
             element={
               <SuspenseWrapper>
                 <GroupList />
+              </SuspenseWrapper>
+            }
+          />
+          <Route
+            path="/admin/pricings"
+            element={
+              <SuspenseWrapper>
+                <PricingList />
               </SuspenseWrapper>
             }
           />

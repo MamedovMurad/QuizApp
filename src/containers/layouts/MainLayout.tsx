@@ -5,6 +5,7 @@ import {
   Dropdown,
   Drawer,
   Button,
+  type MenuProps,
 } from 'antd';
 import {
   HomeOutlined,
@@ -14,21 +15,57 @@ import {
   LogoutOutlined,
   DownOutlined,
   MenuOutlined,
+  DatabaseOutlined,
+  AppstoreOutlined,
+  DollarOutlined,
 } from '@ant-design/icons';
 import { useLocation, useNavigate, Outlet } from 'react-router-dom';
+import { useAuthContext } from '../../context/AuthProvider';
+
 
 const { Header, Sider, Content, Footer } = Layout;
 
-const menuItems = [
-  { key: '/', label: 'Home', icon: <HomeOutlined /> },
-  { key: '/quiz/results', label: 'My Exam Results', icon: <PieChartOutlined /> },
-  { key: '/admin/quiz/list', label: 'Questions', icon: <PieChartOutlined /> },
-  { key: '/admin/groups', label: 'Question types', icon: <PieChartOutlined /> },
-
-
+const allMenuItems: MenuProps['items'] = [
+  {
+    key: '/',
+    icon: <HomeOutlined />,
+    label: 'Home',
+  },
+  {
+    key: '/quiz/results',
+    icon: <PieChartOutlined />,
+    label: 'My Exam Results',
+  },
+  {
+    key: '/pricing',
+    icon: <DollarOutlined />,
+    label: 'Pricing',
+  },
+  {
+    type: 'group',
+    label: 'Admin',
+    children: [
+      {
+        key: '/admin/quiz/list',
+        label: 'Questions',
+        icon: <DatabaseOutlined />,
+      },
+      {
+        key: '/admin/groups',
+        label: 'Question Types',
+        icon: <AppstoreOutlined />,
+      },
+      {
+        key: '/admin/pricings',
+        label: 'Pricings',
+        icon: <DollarOutlined />,
+      },
+    ],
+  },
 ];
 
 export default function MainLayout() {
+  const { user } = useAuthContext();
   const [collapsed, setCollapsed] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -37,10 +74,23 @@ export default function MainLayout() {
   const location = useLocation();
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('agent');
     localStorage.removeItem('name');
     navigate('/login');
   };
+
+
+  const isAdmin = user?.role === 'admin';
+
+// filter ilə admin qrupu yalnız adminə göstərilir
+const menuItems = allMenuItems?.filter(item => {
+  // item.type === 'group' olan (admin qrupu) yalnız adminlərə açıq olsun
+  if (item?.type === 'group') {
+    return isAdmin;
+  }
+  return true; // digər bütün menyular göstərilsin
+});
+
 
   const dropdownMenu = (
     <AntMenu>
@@ -150,7 +200,7 @@ export default function MainLayout() {
 
           <Dropdown overlay={dropdownMenu} trigger={['click']}>
             <div className="cursor-pointer text-gray-700 hover:text-blue-600 select-none flex items-center gap-1">
-              {localStorage.getItem('name')}
+              {user?.name}
               <DownOutlined />
             </div>
           </Dropdown>

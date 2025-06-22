@@ -1,33 +1,42 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { getMe } from '../api/auth';
+
+interface User {
+  name: string;
+  package: string;
+  status: string;
+  expired_at: string | null;
+  role: 'admin' | 'user' | string;
+}
 
 interface AuthContextType {
-  isAuthenticated: boolean;
-  login: (token: string) => void;
-  logout: () => void;
+  user: User | null;
+  loading: boolean,
+  handleGetUser: () => void
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: any }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
+  function handleGetUser() {
+    if (!localStorage.getItem("agent")) {
+      setLoading(false)
+      return
+    }
+    getMe().then((data) => {
+      setUser(data.data);
+    }).finally(() => setLoading(false));;
+  }
   useEffect(() => {
-    const token = localStorage.getItem('agent');
-    setIsAuthenticated(!!token);
-  }, []);
 
-  const login = (token: string) => {
-    localStorage.setItem('agent', token);
-    setIsAuthenticated(true);
-  };
-
-  const logout = () => {
-    localStorage.removeItem('agent');
-    setIsAuthenticated(false);
-  };
+    handleGetUser()
+  }, [localStorage.getItem("agent")]);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, handleGetUser }}>
       {children}
     </AuthContext.Provider>
   );

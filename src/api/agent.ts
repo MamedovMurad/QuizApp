@@ -37,7 +37,7 @@ api.interceptors.response.use(
     } else if (status === 404) {
       messageApi.info('Not found.')
     } else if (status >= 500) {
-      messageApi.error('Server error. Try later.')
+      messageApi.error(error.response?.data?.msg || 'Something went wrong.')
     } else {
       messageApi.error(error.response?.data?.message || 'Something went wrong.')
     }

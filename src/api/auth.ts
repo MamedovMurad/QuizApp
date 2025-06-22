@@ -51,3 +51,9 @@ export function logout() {
 export function isAuthenticated() {
   return !!localStorage.getItem(TOKEN_KEY)
 }
+
+export const getMe=async()=>{
+   const response = await api.get("/get-me")
+
+   return response
+}

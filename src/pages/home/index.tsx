@@ -2,13 +2,21 @@ import { Button, Spin } from "antd";
 import { useNavigate } from "react-router-dom";
 import { getCategories, startQuizApi } from "../../api/quiz";
 import { useEffect, useState } from "react";
+import { useAuthContext } from "../../context/AuthProvider";
+import { messageApi } from "../../context/MessageContext";
 
 export default function StartTestPage() {
   const [categories, setcategories] = useState([]);
   const [loading, setloading] = useState(false);
+  const {user}= useAuthContext()
   const navigate = useNavigate();
 
   const startQuiz = (id: string | number) => {
+    if (user?.status!=="active"||user?.role!=="admin") {
+       messageApi.error("Aktiv imtahan paketiniz yoxdur!")
+       navigate("/pricing")
+       return
+    }
     startQuizApi(id).then((data) => {
       navigate("/quiz/" + data)
     })

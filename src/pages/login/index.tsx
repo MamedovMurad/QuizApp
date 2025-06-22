@@ -2,17 +2,19 @@ import { Button, Form, Input, Typography, message } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../../api/auth';
+import {  useAuthContext } from '../../context/AuthProvider';
 
 
 export default function LoginPage() {
+  const { handleGetUser } = useAuthContext()
   const navigate = useNavigate();
 
   const onFinish = async (values: any) => {
     try {
       message.loading({ content: 'Logging in...', key: 'login' });
 
-    await login(values.email, values.password);
-
+      await login(values.email, values.password);
+      handleGetUser()
       message.success({ content: 'Login successful!', key: 'login' });
       navigate('/'); // Redirect to home/dashboard
     } catch (err: any) {
