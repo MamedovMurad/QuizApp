@@ -12,7 +12,7 @@ export default function StartTestPage() {
   const navigate = useNavigate();
 
   const startQuiz = (id: string | number) => {
-    if (user?.status!=="active"||user?.role!=="admin") {
+    if (user?.status!=="active"&&user?.role!=="admin") {
        messageApi.error("Aktiv imtahan paketiniz yoxdur!")
        navigate("/pricing")
        return
