@@ -23,6 +23,14 @@ export default function DragDropBlankQuestion({ question }: Props) {
     return initial;
   });
 
+  function spacesToNbsp(text: string): string {
+  return text.replace(/ +/g, (match) => {
+    const count = match.length;
+    const nbspCount = Math.floor(count );
+    const normalSpaceCount = count ;
+    return '\u00a0'.repeat(nbspCount) + ' '.repeat(normalSpaceCount);
+  });
+}
   const usedOptionIds = Object.values(answers).filter(
     (v): v is number => v !== null
   );
@@ -38,7 +46,10 @@ export default function DragDropBlankQuestion({ question }: Props) {
 
   let blankIndex = 0;
 
-  const htmlParsed = parse(question.text, {
+  // Normal boşluqları non-breaking space ilə əvəz edirik
+const safeText = spacesToNbsp(question.text);
+
+  const htmlParsed = parse(safeText, {
     replace: (node) => {
       if (node.type === "text") {
         const textNode = node as Text;
@@ -68,7 +79,7 @@ export default function DragDropBlankQuestion({ question }: Props) {
                     onChange={(val) => {
                       setAnswers((prev) => {
                         const newAnswers = { ...prev };
-                        // digər blank-lardan eyni seçimi sil
+                        // digər blank-lardan eyni seçimi silirik
                         Object.entries(newAnswers).forEach(([bId, optId]) => {
                           if (optId === val) newAnswers[+bId] = null;
                         });

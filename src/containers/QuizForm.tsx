@@ -102,7 +102,7 @@ export default function QuizForm({ questions, onFinish }: QuizFormProps) {
 
 
   return (
-    <div className=" max-w-3xl mx-auto">
+    <div className="  mx-auto">
       <Card>
         <Paragraph>{currentQuestion?.title}</Paragraph>
         {
