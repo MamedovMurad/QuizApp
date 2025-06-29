@@ -109,7 +109,7 @@ export default function QuizForm({ questions, onFinish }: QuizFormProps) {
         {
           (currentQuestion.type !== "blanks") && (
             currentQuestion.type !== "dragdrop" &&
-            <Paragraph >{currentQuestion?.text}</Paragraph>
+            <Paragraph dangerouslySetInnerHTML={{__html:currentQuestion?.text}}></Paragraph>
           )
         }
 
