@@ -56,12 +56,12 @@ export default function OrderingField({
   };
 
   return (
-    <div style={{ display: "flex", gap: 40 }}>
+    <div style={{ display: "flex", gap: 10 }}>
       <div
         onDragOver={onDragOver}
         onDrop={(e) => onDrop(e, "available")}
         style={{
-          width: 200,
+         
           minHeight: 250,
           border: "1px solid #ccc",
           padding: 8,
@@ -91,7 +91,7 @@ export default function OrderingField({
         onDragOver={onDragOver}
         onDrop={(e) => onDrop(e, "ordered")}
         style={{
-          width: 200,
+          width: "50%",
           minHeight: 250,
           border: "2px dashed #4a90e2",
           padding: 8,
