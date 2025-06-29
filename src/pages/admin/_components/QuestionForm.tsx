@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import 'react-quill/dist/quill.snow.css';
 import {
   Form,
   Input,
@@ -15,9 +16,10 @@ import { useWatch } from 'antd/es/form/Form';
 import { YesNoField } from './question-fields/YesNoField';
 import { OrderingField } from './question-fields/OrderingField';
 import { createQuiz, getGroups } from '../../../api/quiz';
+import { RichTextEditor } from './RichTextEditor';
 
 const { Option } = Select;
-const questionTypes = ['single', 'multiple', 'blanks', 'ordering', "yesno","dragdrop"];
+const questionTypes = ['single', 'multiple', 'blanks', 'ordering', "yesno", "dragdrop"];
 
 function appendFormData(formData: FormData, data: any, rootKey = '') {
   if (data instanceof File) {
@@ -41,55 +43,55 @@ function appendFormData(formData: FormData, data: any, rootKey = '') {
 }
 
 
-export const QuestionForm = ({id}:{id:any}) => {
+export const QuestionForm = ({ id }: { id: any }) => {
   const [form] = Form.useForm();
   const [questionType, setQuestionType] = useState('');
   const [groups, setgroups] = useState<any>(null);
 
   const questionText = useWatch('text', form); // 👈 burada sualı izləyirik
 
-const onFinish = (values: any) => {
-  const formData = new FormData();
+  const onFinish = (values: any) => {
+    const formData = new FormData();
 
-  // Faylı ayrıca əlavə et
-  if (values.image?.fileList?.length) {
-    formData.append('image', values.image.fileList[0].originFileObj);
-  }
+    // Faylı ayrıca əlavə et
+    if (values.image?.fileList?.length) {
+      formData.append('image', values.image.fileList[0].originFileObj);
+    }
 
-  // category_id ayrıca əlavə olunur (çünki form sahəsində yoxdur)
-  formData.append('category_id', id);
+    // category_id ayrıca əlavə olunur (çünki form sahəsində yoxdur)
+    formData.append('category_id', id);
 
-  // Qalan bütün sahələri dinamik şəkildə əlavə edirik
-  const { image, ...rest } = values;
-  appendFormData(formData, rest);
+    // Qalan bütün sahələri dinamik şəkildə əlavə edirik
+    const { image, ...rest } = values;
+    appendFormData(formData, rest);
 
-  createQuiz(formData)
-    .then(() => {
-      message.success('Sual yaradıldı');
-      form.resetFields();
-    })
-    .catch(() => {
-      message.error('Xəta baş verdi');
-    });
-};
+    createQuiz(formData)
+      .then(() => {
+        message.success('Sual yaradıldı');
+        form.resetFields();
+      })
+      .catch(() => {
+        message.error('Xəta baş verdi');
+      });
+  };
 
 
 
   useEffect(() => {
-    getGroups().then((data)=>{
+    getGroups().then((data) => {
       setgroups(data.data)
     })
   }, []);
   return (
     <Form form={form} layout="vertical" onFinish={onFinish}>
-      <div className="flex items-center gap-x-5">
+      <div className="">
         <Form.Item
-          className=' w-full'
+          className="w-full"
           name="text"
           label="Sual"
           rules={[{ required: true, message: 'Sual daxil edin' }]}
         >
-          <Input.TextArea rows={3} />
+          <RichTextEditor />
         </Form.Item>
 
         <Form.Item
@@ -116,7 +118,7 @@ const onFinish = (values: any) => {
 
         <Form.Item name="group_id" label="Kateqoriya" rules={[{ required: true }]}>
           <Select >
-            {groups?.map((type:any) => (
+            {groups?.map((type: any) => (
               <Option key={type.id} value={type.id}>
                 {type.title}
               </Option>

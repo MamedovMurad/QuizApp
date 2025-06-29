@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { Form } from "antd";
 import type { Question } from "../models/quiz";
 import { BlankDropTarget } from "./drag-drop-sub";
+import parse from "html-react-parser";
+
+import type { Text } from "domhandler";
 
 interface AnswersMap {
   [blankId: number]: number | null;
@@ -12,8 +15,6 @@ interface Props {
 }
 
 export default function DragDropBlankQuestion({ question }: Props) {
-  const parts = question.text.split("___");
-
   const [answers, setAnswers] = useState<AnswersMap>(() => {
     const initial: AnswersMap = {};
     question.blanks?.forEach((b) => {
@@ -34,6 +35,62 @@ export default function DragDropBlankQuestion({ question }: Props) {
     e.dataTransfer.setData("text/plain", optionId.toString());
     e.dataTransfer.effectAllowed = "move";
   };
+
+  let blankIndex = 0;
+
+  const htmlParsed = parse(question.text, {
+    replace: (node) => {
+      if (node.type === "text") {
+        const textNode = node as Text;
+        if (textNode.data.includes("___")) {
+          const segments = textNode.data.split("___");
+          const elements: any[] = [];
+
+          segments.forEach((text, i) => {
+            elements.push(<span key={`text-${i}`}>{text}</span>);
+
+            if (
+              i < segments.length - 1 &&
+              question.blanks &&
+              blankIndex < question.blanks.length
+            ) {
+              const blank = question.blanks[blankIndex];
+
+              elements.push(
+                <Form.Item
+                  key={`blank-${blank.id}`}
+                  name={["answer_" + question.id, blank.id.toString()]}
+                  rules={[{ required: true, message: "Zəhmət olmasa seçim edin" }]}
+                  style={{ display: "inline-block", margin: "0 8px" }}
+                >
+                  <BlankDropTarget
+                    value={answers[blank.id]}
+                    onChange={(val) => {
+                      setAnswers((prev) => {
+                        const newAnswers = { ...prev };
+                        // digər blank-lardan eyni seçimi sil
+                        Object.entries(newAnswers).forEach(([bId, optId]) => {
+                          if (optId === val) newAnswers[+bId] = null;
+                        });
+                        newAnswers[blank.id] = val;
+                        onChange(newAnswers);
+                        return newAnswers;
+                      });
+                    }}
+                    options={question.options}
+                  />
+                </Form.Item>
+              );
+
+              blankIndex++;
+            }
+          });
+
+          return <>{elements}</>;
+        }
+      }
+    },
+  });
 
   return (
     <div style={{ display: "flex", gap: 20 }}>
@@ -65,38 +122,7 @@ export default function DragDropBlankQuestion({ question }: Props) {
 
       {/* Sağ tərəfdə cümlə və blank-lar */}
       <div style={{ flex: 2, fontSize: 18, lineHeight: "32px" }}>
-        {parts.map((part, i) => (
-          <span key={i}>
-            {part}
-            {i < (question.blanks?.length ?? 0) && (
-              <Form.Item
-                name={["answer_" + question.id, question.blanks![i].id.toString()]}
-                rules={[{ required: true, message: "Zəhmət olmasa seçim edin" }]}
-                style={{ display: "inline-block", margin: "0 8px" }}
-              >
-                <BlankDropTarget
-                  value={answers[question.blanks![i].id]}
-                  onChange={(val) => {
-                    setAnswers((prev) => {
-                      const newAnswers = { ...prev };
-
-                      // Eyni option digər blanklarda varsa sil
-                      Object.entries(newAnswers).forEach(([bId, optId]) => {
-                        if (optId === val) newAnswers[+bId] = null;
-                      });
-
-                      newAnswers[question.blanks![i].id] = val;
-                      onChange(newAnswers);
-                      return newAnswers;
-                    });
-                  }}
-                  options={question.options}
-               
-                />
-              </Form.Item>
-            )}
-          </span>
-        ))}
+        {htmlParsed}
       </div>
     </div>
   );

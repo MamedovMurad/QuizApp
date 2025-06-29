@@ -54,9 +54,9 @@ export default function ResultDetailPage() {
     <div className="">
       <div className="max-w-6xl mx-auto space-y-10">
         <ResultStatsChart
-  details={result.details}
-  calculatePartialPoint={calculatePartialPoint}
-/>
+          details={result.details}
+          calculatePartialPoint={calculatePartialPoint}
+        />
         <h1 className="text-3xl font-bold text-gray-800">Exam Result Summary</h1>
 
         <div className="space-y-6">
@@ -93,19 +93,22 @@ export default function ResultDetailPage() {
             return (
               <Card
                 key={item.question_id}
-                className={`transition-all duration-300 border-l-4 ${
-                  score === total
+                className={`transition-all duration-300 border-l-4 ${score === total
                     ? 'border-green-500'
                     : score === 0
-                    ? 'border-red-500'
-                    : 'border-orange-400'
-                } bg-white shadow-sm rounded-xl hover:shadow-lg`}
+                      ? 'border-red-500'
+                      : 'border-orange-400'
+                  } bg-white shadow-sm rounded-xl hover:shadow-lg`}
                 bodyStyle={{ padding: '20px' }}
               >
                 <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-base font-semibold text-gray-800 leading-snug">
-                    {idx + 1}. {item.question_text}
-                  </h3>
+               
+                  <div className="text-base font-semibold text-gray-800 leading-snug">
+                     {idx + 1}.
+                  <div dangerouslySetInnerHTML={{__html:item.question_text}}>
+                 
+                  </div>
+                  </div>
                   <Tag
                     color={color}
                     className="text-sm flex items-center gap-1 px-2 py-0.5 rounded"
