@@ -4,7 +4,7 @@ import type { Question } from "../models/quiz";
 import QuestionRenderer from "./questionRenderer";
 import { transformOrderingAnswer } from "../utils/answers";
 import Paragraph from "antd/es/typography/Paragraph";
-
+import parse from "html-react-parser";
 
 interface QuizFormProps {
   questions: Question[];
@@ -99,6 +99,8 @@ export default function QuizForm({ questions, onFinish }: QuizFormProps) {
     }
   };
 
+
+
   return (
     <div className=" max-w-3xl mx-auto">
       <Card>
@@ -109,7 +111,9 @@ export default function QuizForm({ questions, onFinish }: QuizFormProps) {
         {
           (currentQuestion.type !== "blanks") && (
             currentQuestion.type !== "dragdrop" &&
-            <Paragraph dangerouslySetInnerHTML={{__html:currentQuestion?.text}}></Paragraph>
+            <Paragraph>
+              {parse(currentQuestion?.text)} {/* əgər html-react-parser istifadə edirsinizsə */}
+            </Paragraph>
           )
         }
 
