@@ -59,8 +59,8 @@ const deleteQuiz = (id: string | number) => {
   return api.delete('/admin/question-delete/' + id);
 };
 
-const getAllQuizes = async (page: number = 1, pageSize: number = 25): Promise<PaginatedResponse<QuestionResponse>> => {
-  return api.get(`/admin/questions?page=${page}&limit=${pageSize}`).then(res => res.data);
+const getAllQuizes = async (page: number = 1, pageSize: number = 25, type = "", search:string): Promise<PaginatedResponse<QuestionResponse>> => {
+  return api.get(`/admin/questions?page=${page}&limit=${pageSize}&type=${type}&q=${search}`).then(res => res.data);
 }
 const getQuizById = (id: string | number) => {
   return api.get("/admin/question-edit/" + id)

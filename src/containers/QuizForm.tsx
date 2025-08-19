@@ -1,4 +1,4 @@
-import { Button, Card, Form } from "antd";
+import { Button, Card, Form, Progress } from "antd";
 import { useEffect, useState } from "react";
 import type { Question } from "../models/quiz";
 import QuestionRenderer from "./questionRenderer";
@@ -13,12 +13,51 @@ interface QuizFormProps {
 
 export default function QuizForm({ questions, onFinish }: QuizFormProps) {
 
+  // countdown state
+  const [timeLeft, setTimeLeft] = useState(100);
+
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, any>>({});
   const [form] = Form.useForm();
 
   const currentQuestion = questions[currentIndex];
   const questionKey = `answer_${currentQuestion.id}`;
+
+
+
+
+  // timer setup with localStorage
+  useEffect(() => {
+    const totalTime = 100; // seconds
+    const storedStart = localStorage.getItem("quiz_start_time");
+    let startTime: number;
+
+    if (storedStart) {
+      startTime = parseInt(storedStart, 10);
+    } else {
+      startTime = Date.now();
+      localStorage.setItem("quiz_start_time", startTime.toString());
+    }
+
+    const timer = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      const remaining = totalTime - elapsed;
+
+      if (remaining <= 0) {
+        clearInterval(timer);
+        setTimeLeft(0);
+        localStorage.removeItem("quiz_start_time")
+        // avtomatik olaraq submit etsin
+        //onSubmit();
+      } else {
+        setTimeLeft(remaining);
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
 
   // Reset and set form values when question changes
   useEffect(() => {
@@ -103,6 +142,31 @@ export default function QuizForm({ questions, onFinish }: QuizFormProps) {
 
   return (
     <div className="  mx-auto">
+      <Card className="mb-4 ">
+        <div className="flex justify-between items-center mb-2">
+          <span className="font-medium text-gray-700">
+            Question {currentIndex + 1} of {questions.length}
+          </span>
+          <span
+            className={`text-lg font-bold ${timeLeft <= 10 ? "text-red-500" : "text-gray-700"
+              }`}
+          >
+            ⏳ {timeLeft}s
+          </span>
+          <span className="text-sm text-gray-500">
+            {Math.round(((currentIndex + 1) / questions.length) * 100)}%
+          </span>
+        </div>
+        <Progress
+          percent={((currentIndex + 1) / questions.length) * 100}
+          showInfo={false}
+          strokeColor="#1677ff"
+          strokeWidth={14}
+          className="rounded-full"
+        />
+
+
+      </Card>
       <Card>
         <Paragraph>{currentQuestion?.title}</Paragraph>
         {

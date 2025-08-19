@@ -105,9 +105,9 @@ const safeText = spacesToNbsp(question.text);
 
   return (
     <div style={{ display: "flex", gap: 20 }}>
-      {/* Sol seçimlər paneli */}
+  
       <div style={{ flex: 1 }} className="border border-blue-400 rounded-md p-2 mb-5">
-        <h4>Seçimlər</h4>
+        <h4>Options</h4>
         {question.options?.map((opt) => {
           const disabled = usedOptionIds.includes(opt.id);
           return (

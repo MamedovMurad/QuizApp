@@ -29,6 +29,7 @@ api.interceptors.response.use(
 
     if (status === 401) {
       messageApi.error('Unauthorized. Please login again.')
+      localStorage.removeItem("agent")
       window.location.href = '/login'
     } else if (status === 403) {
       messageApi.warning('You don’t have permission.')

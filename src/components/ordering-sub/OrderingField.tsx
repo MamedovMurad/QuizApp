@@ -61,13 +61,13 @@ export default function OrderingField({
         onDragOver={onDragOver}
         onDrop={(e) => onDrop(e, "available")}
         style={{
-         
+
           minHeight: 250,
           border: "1px solid #ccc",
           padding: 8,
         }}
       >
-        <h4>Seçimlər</h4>
+        <h4>Options</h4>
         {available.length === 0 && <p style={{ color: "#888" }}>Seçim yoxdur</p>}
         {available.map(({ id, text }) => (
           <div
@@ -97,8 +97,8 @@ export default function OrderingField({
           padding: 8,
         }}
       >
-        <h4>Sıralanmış</h4>
-        {value.length === 0 && <p style={{ color: "#888" }}>Boşdur</p>}
+        <h4>Sorted</h4>
+        {value.length === 0 && <p style={{ color: "#888" }}>Empty</p>}
         {value.map(({ id, text }) => (
           <div
             key={id}
@@ -118,7 +118,7 @@ export default function OrderingField({
 
         {selectionLimit && value.length >= selectionLimit && (
           <p style={{ color: "red", marginTop: 10 }}>
-            Maksimum {selectionLimit} seçim icazəlidir.
+            You can select up to {selectionLimit} options.
           </p>
         )}
       </div>

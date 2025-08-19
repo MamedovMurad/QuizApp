@@ -37,10 +37,10 @@ export default function BlankQuestion({ question }: { question: Question }) {
                   style={{
                     display: "inline-block",
                     margin: "0 8px",
-                    minWidth: "120px",
+                    minWidth: "320px",
                   }}
                 >
-                  <Select placeholder="Seçin...">
+                  <Select placeholder="Choose...">
                     {blank.options.map((opt) => (
                       <Select.Option key={opt.id} value={opt.id}>
                         {opt.text}

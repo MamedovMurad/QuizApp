@@ -16,7 +16,7 @@ export default function OrderingQuestion({ question }: { question: Question }) {
         name={fieldName}
         valuePropName="value"
         trigger="onChange"
-        rules={[{ required: true, message: "Zəhmət olmasa sıralama edin." }]}
+        rules={[{ required: true, message: "Please sort" }]}
       >
         <OrderingField
         selectionLimit={question.selection_limit}
