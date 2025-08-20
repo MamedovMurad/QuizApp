@@ -30,13 +30,19 @@ if (token) {
   };
 console.log(token);
 
+
+
   useEffect(() => {
-    getQuizes(token||"").then((data)=>{
-      console.log(data.data);
-      setQuestions(data.data)
-      
-    })
-  }, []);
+    getQuizes(token || "").then((data) => {
+      const list = data.data || [];
+      if (!list.length) {
+        // boşdursa ana səhifəyə qaytar
+        navigate("/", { replace: true });
+      } else {
+        setQuestions(list);
+      }
+    });
+  }, [token, navigate]);
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
