@@ -18,6 +18,7 @@ import {
   DatabaseOutlined,
   AppstoreOutlined,
   DollarOutlined,
+  TagOutlined,
 } from '@ant-design/icons';
 import { useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useAuthContext } from '../../context/AuthProvider';
@@ -59,6 +60,11 @@ const allMenuItems: MenuProps['items'] = [
         key: '/admin/pricings',
         label: 'Pricings',
         icon: <DollarOutlined />,
+      },
+          {
+        key: '/admin/promos',
+        label: 'Promo-codes',
+        icon: <TagOutlined />,
       },
     ],
   },

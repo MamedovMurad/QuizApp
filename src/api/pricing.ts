@@ -16,10 +16,20 @@ const deletePricing = (id: string | number) => {
 const makePayment = (id:string|number)=>{
   return api.post("/make-payment", {package_id:id});
 }
+
+
+const getPromos = ()=>{
+   return api.get("/admin/promo-code");
+}
+const createPromo = (values:{title:string; discount:number|string})=>{
+   return api.post("/admin/promo-code",values);
+}
 export {
     getPricings,
     createPricing,
     updatePricing,
     deletePricing,
-    makePayment
+    makePayment,
+    getPromos,
+    createPromo
 }

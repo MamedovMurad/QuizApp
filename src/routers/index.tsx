@@ -7,6 +7,7 @@ import PricingList from '../pages/admin/pricing';
 import PaymentSuccess from '../pages/payment/PaymentSuccess';
 import PaymentFailed from '../pages/payment/PaymentFailed';
 import { EditQuestionEditForm } from '../pages/admin/questions/edit-question/QuestionForm';
+import PromoList from '../pages/admin/promo-codes';
 
 // Wrapper
 const SuspenseWrapper = ({ children }: { children: React.ReactNode }) => (
@@ -171,6 +172,15 @@ export const router = createBrowserRouter(
             element={
               <SuspenseWrapper>
                 <PricingList />
+              </SuspenseWrapper>
+            }
+          />
+
+          <Route
+            path="/admin/promos"
+            element={
+              <SuspenseWrapper>
+                <PromoList />
               </SuspenseWrapper>
             }
           />

@@ -71,7 +71,7 @@ const safeText = spacesToNbsp(question.text);
                 <Form.Item
                   key={`blank-${blank.id}`}
                   name={["answer_" + question.id, blank.id.toString()]}
-                  rules={[{ required: true, message: "Zəhmət olmasa seçim edin" }]}
+                  rules={[{ required: true, message: "Please choose" }]}
                   style={{ display: "inline-block", margin: "0 8px" }}
                 >
                   <BlankDropTarget
