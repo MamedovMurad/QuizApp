@@ -7,13 +7,12 @@ import {
   Input,
   InputNumber,
   message,
-  Popconfirm,
+
   Tag,
 } from "antd";
 import {
   PlusOutlined,
-  EditOutlined,
-  DeleteOutlined,
+
 } from "@ant-design/icons";
 import { createPromo, getPromos } from "../../../api/pricing";
 
