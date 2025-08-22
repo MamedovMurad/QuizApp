@@ -12,10 +12,8 @@ interface QuizFormProps {
 }
 
 export default function QuizForm({ questions, onFinish }: QuizFormProps) {
-
   // countdown state
-  const [timeLeft, setTimeLeft] = useState(100);
-
+  const [timeLeft, setTimeLeft] = useState(100 * 60); // 100 dəqiqə = 6000 saniyə
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, any>>({});
@@ -24,12 +22,17 @@ export default function QuizForm({ questions, onFinish }: QuizFormProps) {
   const currentQuestion = questions[currentIndex];
   const questionKey = `answer_${currentQuestion.id}`;
 
-
-
+  // helper: format seconds into HH:MM:SS
+  const formatTime = (seconds: number) => {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    return [h, m, s].map((val) => String(val).padStart(2, "0")).join(":");
+  };
 
   // timer setup with localStorage
   useEffect(() => {
-    const totalTime = 100; // seconds
+    const totalTime = 100 * 60; // ✅ 100 dəqiqə = 6000 saniyə
     const storedStart = localStorage.getItem("quiz_start_time");
     let startTime: number;
 
@@ -47,9 +50,9 @@ export default function QuizForm({ questions, onFinish }: QuizFormProps) {
       if (remaining <= 0) {
         clearInterval(timer);
         setTimeLeft(0);
-        localStorage.removeItem("quiz_start_time")
+        localStorage.removeItem("quiz_start_time");
         // avtomatik olaraq submit etsin
-        //onSubmit();
+        // onSubmit();
       } else {
         setTimeLeft(remaining);
       }
@@ -57,7 +60,6 @@ export default function QuizForm({ questions, onFinish }: QuizFormProps) {
 
     return () => clearInterval(timer);
   }, []);
-
 
   // Reset and set form values when question changes
   useEffect(() => {
@@ -98,15 +100,6 @@ export default function QuizForm({ questions, onFinish }: QuizFormProps) {
     }
   };
 
-  // Previous button handler
-  // const goPrev = async () => {
-  //   const currentAnswer = await saveCurrentAnswer();
-  //   if (currentAnswer === null) return; // validation failed
-  //   if (currentIndex > 0) {
-  //     setCurrentIndex(currentIndex - 1);
-  //   }
-  // };
-
   // Submit handler for Finish button
   const onSubmit = async () => {
     try {
@@ -125,11 +118,8 @@ export default function QuizForm({ questions, onFinish }: QuizFormProps) {
       setAnswers(allAnswers);
 
       if (onFinish) {
-
         onFinish(allAnswers);
-
         console.log(allAnswers);
-
       } else {
         console.log("Quiz finished. All answers:", allAnswers);
       }
@@ -138,20 +128,19 @@ export default function QuizForm({ questions, onFinish }: QuizFormProps) {
     }
   };
 
-
-
   return (
-    <div className="  mx-auto">
-      <Card className="mb-4 ">
+    <div className="mx-auto">
+      <Card className="mb-4">
         <div className="flex justify-between items-center mb-2">
           <span className="font-medium text-gray-700">
             Question {currentIndex + 1} of {questions.length}
           </span>
           <span
-            className={`text-lg font-bold ${timeLeft <= 10 ? "text-red-500" : "text-gray-700"
-              }`}
+            className={`text-lg font-bold ${
+              timeLeft <= 10 ? "text-red-500" : "text-gray-700"
+            }`}
           >
-            ⏳ {timeLeft}s
+            ⏳ {formatTime(timeLeft)}
           </span>
           <span className="text-sm text-gray-500">
             {Math.round(((currentIndex + 1) / questions.length) * 100)}%
@@ -164,22 +153,26 @@ export default function QuizForm({ questions, onFinish }: QuizFormProps) {
           strokeWidth={14}
           className="rounded-full"
         />
-
-
       </Card>
+
       <Card>
         <Paragraph>{currentQuestion?.title}</Paragraph>
-        {
-          currentQuestion?.image && <div><img className=" object-contain w-full max-h-[300px] rounded-2xl" src={currentQuestion?.image} alt="" /></div>
-        }
-        {
-          (currentQuestion.type !== "blanks") && (
-            currentQuestion.type !== "dragdrop" &&
+        {currentQuestion?.image && (
+          <div>
+            <img
+              className="object-contain w-full max-h-[300px] rounded-2xl"
+              src={currentQuestion?.image}
+              alt=""
+            />
+          </div>
+        )}
+        {currentQuestion.type !== "blanks" &&
+          currentQuestion.type !== "dragdrop" && (
             <Paragraph>
-              {parse(currentQuestion?.text)} {/* əgər html-react-parser istifadə edirsinizsə */}
+              {parse(currentQuestion?.text)}{" "}
+              {/* əgər html-react-parser istifadə edirsinizsə */}
             </Paragraph>
-          )
-        }
+          )}
 
         <Form
           form={form}
@@ -190,17 +183,8 @@ export default function QuizForm({ questions, onFinish }: QuizFormProps) {
         >
           <QuestionRenderer question={currentQuestion} />
 
-          <Form.Item className=" w-full ">
+          <Form.Item className="w-full">
             <div className="flex justify-between items-center">
-              {/* <Button
-              type="default"
-              onClick={goPrev}
-              disabled={currentIndex === 0}
-              style={{ marginRight: 8 }}
-            >
-              Previous
-            </Button> */}
-
               {currentIndex < questions.length - 1 && (
                 <Button type="primary" onClick={goNext}>
                   Next
@@ -215,9 +199,7 @@ export default function QuizForm({ questions, onFinish }: QuizFormProps) {
             </div>
           </Form.Item>
         </Form>
-
       </Card>
     </div>
-
   );
 }
