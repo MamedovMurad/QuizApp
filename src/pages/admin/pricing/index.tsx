@@ -8,6 +8,7 @@ import {
   InputNumber,
   message,
   Popconfirm,
+  Select,
 } from 'antd';
 import {
   PlusOutlined,
@@ -21,6 +22,9 @@ import {
   updatePricing,
   deletePricing,
 } from '../../../api/pricing';
+import { getCategories } from '../../../api/quiz';
+
+
 
 interface PricingItem {
   id: number;
@@ -29,12 +33,19 @@ interface PricingItem {
   price: number;
   discount?: number | null;
   count: number;
+  category_id?: number;
   created_at: string;
   updated_at: string | null;
 }
 
+interface Category {
+  id: number;
+  title: string;
+}
+
 const PricingList = () => {
   const [data, setData] = useState<PricingItem[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]); // ✅ kateqoriyalar
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingItem, setEditingItem] = useState<PricingItem | null>(null);
@@ -52,8 +63,18 @@ const PricingList = () => {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const res = await getCategories();
+      setCategories(res.data); // ✅ backenddən gələn list
+    } catch {
+      message.error('Kateqoriyalar yüklənə bilmədi');
+    }
+  };
+
   useEffect(() => {
     fetchData();
+    fetchCategories();
   }, []);
 
   const handleCreate = () => {
@@ -99,6 +120,12 @@ const PricingList = () => {
     { title: 'ID', dataIndex: 'id', width: 60 },
     { title: 'Başlıq', dataIndex: 'title' },
     { title: 'Açıqlama', dataIndex: 'description' },
+    {
+      title: 'Kateqoriya',
+      dataIndex: 'category_id',
+      render: (val: number) =>
+        categories.find((c) => c.id === val)?.title || '—', // ✅ title göstər
+    },
     {
       title: 'Qiymət ($)',
       dataIndex: 'price',
@@ -196,6 +223,19 @@ const PricingList = () => {
             <Input.TextArea rows={3} />
           </Form.Item>
           <Form.Item
+            name="category_id"
+            label="Kateqoriya"
+            rules={[{ required: true, message: 'Kateqoriya seçilməlidir' }]}
+          >
+            <Select
+              placeholder="Kateqoriya seçin"
+              options={categories.map((c) => ({
+                value: c.id,
+                label: c.title,
+              }))}
+            />
+          </Form.Item>
+          <Form.Item
             name="price"
             label="Qiymət"
             rules={[{ required: true, message: 'Qiymət boş ola bilməz' }]}
@@ -203,7 +243,12 @@ const PricingList = () => {
             <InputNumber className="w-full" min={0} />
           </Form.Item>
           <Form.Item name="discount" label="Endirim (%)">
-            <InputNumber className="w-full" min={0} max={100} placeholder="Məsələn 10" />
+            <InputNumber
+              className="w-full"
+              min={0}
+              max={100}
+              placeholder="Məsələn 10"
+            />
           </Form.Item>
           <Form.Item
             name="count"
