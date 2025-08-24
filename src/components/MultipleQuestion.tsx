@@ -19,7 +19,7 @@ export default function MultipleQuestion({ question }: { question: Question }) {
       <Form.Item
         name={`answer_${question.id}`}
         initialValue={[]}
-        rules={[{ required: true, message: "Zəhmət olmasa seçim edin." }]}
+        rules={[{ required: true, message: "The field is required." }]}
       >
         <Checkbox.Group className="w-full block" onChange={handleChange} value={selectedValues}>
           {question.options?.map((opt) => {

@@ -69,7 +69,13 @@ export default function ResultStatsChart({
               domain={[0, 100]}
               tickFormatter={(v) => `${v}%`}
             />
-            <YAxis type="category" dataKey="group" />
+          <YAxis
+  type="category"
+  dataKey="group"
+  interval={0}
+  width={220}
+
+/>
             <Tooltip formatter={(value: any) => `${value}% correct`} />
             <Bar dataKey="percent" fill="#3b82f6">
               {chartData.map((_, index) => (
