@@ -1,6 +1,6 @@
 import { Button, Form, Input, Typography, message } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../../api/auth';
 import {  useAuthContext } from '../../context/AuthProvider';
 
@@ -87,9 +87,9 @@ export default function LoginPage() {
 
             <div className="text-center text-sm text-gray-600">
               Don’t have an account?{' '}
-              <a className="text-indigo-600 hover:underline" href="#">
+              <Link className="text-indigo-600 hover:underline"  to={"/register"}>
                 Register
-              </a>
+              </Link>
             </div>
           </Form>
         </div>

@@ -8,6 +8,7 @@ import PaymentSuccess from '../pages/payment/PaymentSuccess';
 import PaymentFailed from '../pages/payment/PaymentFailed';
 import { EditQuestionEditForm } from '../pages/admin/questions/edit-question/QuestionForm';
 import PromoList from '../pages/admin/promo-codes';
+import RegisterPage from '../pages/register';
 
 // Wrapper
 const SuspenseWrapper = ({ children }: { children: React.ReactNode }) => (
@@ -40,6 +41,14 @@ export const router = createBrowserRouter(
         element={
           <SuspenseWrapper>
             <LoginPage />
+          </SuspenseWrapper>
+        }
+      />
+           <Route
+        path="/register"
+        element={
+          <SuspenseWrapper>
+            <RegisterPage />
           </SuspenseWrapper>
         }
       />

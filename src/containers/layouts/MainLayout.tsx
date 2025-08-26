@@ -146,7 +146,7 @@ const menuItems = allMenuItems?.filter(item => {
             className={`text-2xl font-bold text-blue-600 select-none py-4 transition-all duration-300 ${collapsed ? 'text-center' : 'text-left px-6'
               }`}
           >
-            {!collapsed ? 'QuizApp' : 'Q'}
+            {!collapsed ? <><img src="/dataexamhub.svg" alt="" /></>: 'Q'}
           </div>
           {renderMenu}
         </Sider>
