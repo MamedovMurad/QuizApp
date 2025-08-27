@@ -40,7 +40,9 @@ api.interceptors.response.use(
     } else if (status >= 500) {
       messageApi.error(error.response?.data?.msg || 'Something went wrong.')
     } else {
-      messageApi.error(error.response?.data?.message || 'Something went wrong.')
+      console.log(error,'error');
+      
+      messageApi.error(error.response.data?.error || 'Something went wrong.')
     }
 
     return Promise.reject(error)

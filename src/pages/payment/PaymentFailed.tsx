@@ -11,10 +11,11 @@ export default function PaymentFailed() {
       <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
         <CloseCircleOutlined className="text-red-500 text-6xl mb-4" />
         <h1 className="text-2xl font-bold mb-2 text-gray-800">
-          Ödəniş uğursuz oldu
+          Payment Failed
         </h1>
         <p className="text-gray-600 mb-6">
-          Üzr istəyirik, ödəniş zamanı xəta baş verdi. Zəhmət olmasa yenidən cəhd edin və ya dəstək komandası ilə əlaqə saxlayın.
+          Sorry, an error occurred during the payment process. Please try again
+          or contact our support team.
         </p>
         <Button
           type="primary"
@@ -22,7 +23,7 @@ export default function PaymentFailed() {
           className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-xl w-full"
           onClick={() => navigate('/')}
         >
-          Əsas səhifəyə qayıt
+          Back to Home
         </Button>
       </div>
     </div>
