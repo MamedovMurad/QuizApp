@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Space, Table, Tag, Button, message, Popconfirm, Input, Select } from 'antd';
 import type { TablePaginationConfig, TableProps } from 'antd';
 import { Link, useSearchParams } from 'react-router-dom';
-import { deleteQuiz, getAllQuizes } from '../../../api/quiz';
+import { deleteQuiz, getAllQuizes, getCategories } from '../../../api/quiz';
+
 import type { PaginatedResponse, QuestionResponse } from '../../../models/quiz';
 import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
 
@@ -13,6 +14,7 @@ const Questions: React.FC = () => {
 
     const [data, setData] = useState<QuestionResponse[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [categories, setCategories] = useState<{ id: number; name: string }[]>([]); // 🆕 state
 
     const [pagination, setPagination] = useState<TablePaginationConfig>({
         current: Number(searchParams.get("page")) || 1,
@@ -25,7 +27,8 @@ const Questions: React.FC = () => {
     // Filtr state URL-dən oxunur
     const [filters, setFilters] = useState({
         title: searchParams.get("q") || '',
-        type: searchParams.get("type") || ''
+        type: searchParams.get("type") || '',
+        category: searchParams.get("category") || '' // 🆕 filter
     });
 
     const fetchData = async (page = 1, pageSize = 25, searchFilters = filters) => {
@@ -35,7 +38,8 @@ const Questions: React.FC = () => {
                 page,
                 pageSize,
                 searchFilters?.type,
-                searchFilters.title
+                searchFilters.title,
+                searchFilters.category // 🆕 category filter göndərilir
             );
             setData(res.data);
             setPagination({
@@ -52,7 +56,17 @@ const Questions: React.FC = () => {
     };
 
     useEffect(() => {
+        // sualları yüklə
         fetchData(pagination.current!, pagination.pageSize!, filters);
+
+        // kategoriyaları yüklə
+        getCategories()
+            .then((res) => {
+                setCategories(res.data); // backenddən {id, name} formatında gəlməlidir
+            })
+            .catch(() => {
+                message.error("Kateqoriyalar yüklənə bilmədi.");
+            });
     }, []);
 
     const handleTableChange: TableProps<QuestionResponse>['onChange'] = (newPagination) => {
@@ -60,7 +74,8 @@ const Questions: React.FC = () => {
             page: String(newPagination.current || 1),
             pageSize: String(newPagination.pageSize || 10),
             q: filters.title,
-            type: filters.type
+            type: filters.type,
+            category: filters.category
         });
         fetchData(newPagination.current!, newPagination.pageSize!, filters);
     };
@@ -70,7 +85,8 @@ const Questions: React.FC = () => {
             page: "1",
             pageSize: String(pagination.pageSize || 10),
             q: filters.title,
-            type: filters.type
+            type: filters.type,
+            category: filters.category
         });
         fetchData(1, pagination.pageSize!, filters);
     };
@@ -121,7 +137,6 @@ const Questions: React.FC = () => {
                             <DeleteOutlined />
                         </Button>
                     </Popconfirm>
-
                 </Space>
             ),
         },
@@ -149,7 +164,7 @@ const Questions: React.FC = () => {
                         allowClear
                         style={{ width: 200 }}
                         value={filters.type}
-                        onChange={(value) => setFilters({ ...filters, type: value })}
+                        onChange={(value) => setFilters({ ...filters, type: value || '' })}
                     >
                         <Option value="single">Single</Option>
                         <Option value="multiple">Multiple</Option>
@@ -158,6 +173,22 @@ const Questions: React.FC = () => {
                         <Option value="ordering">Ordering</Option>
                         <Option value="yesno">Yes/No</Option>
                     </Select>
+
+                    {/* 🆕 Category filter */}
+                    <Select
+                        placeholder="Kateqoriya seçin"
+                        allowClear
+                        style={{ width: 200 }}
+                        value={filters.category}
+                        onChange={(value) => setFilters({ ...filters, category: value || '' })}
+                    >
+                        {categories.map((cat) => (
+                            <Option key={cat.id} value={cat.id.toString()}>
+                                {cat.name}
+                            </Option>
+                        ))}
+                    </Select>
+
                     <Button type="primary" icon={<SearchOutlined />} onClick={handleSearch}>
                         Axtar
                     </Button>
@@ -165,7 +196,7 @@ const Questions: React.FC = () => {
             </div>
 
             <Table<QuestionResponse>
-                rowKey={(record) => record.text + record.type}
+                rowKey={(record) => record.id.toString()}
                 columns={columns}
                 dataSource={data}
                 pagination={pagination}

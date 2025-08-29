@@ -13,8 +13,8 @@ const deletePricing = (id: string | number) => {
   return api.delete("/admin/package/" + id);
 };
 
-const makePayment = (id:string|number)=>{
-  return api.post("/make-payment", {package_id:id});
+const makePayment = (id:string|number,code:number|string)=>{
+  return api.post("/make-payment", {package_id:id,promo_code:code});
 }
 
 
