@@ -5,6 +5,7 @@ import {
   ClockCircleOutlined,
   CalendarOutlined,
   UserOutlined,
+  AppstoreOutlined,
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -15,6 +16,7 @@ interface ISession {
   id: number;
   finished_at: string;
   started_at: string;
+  category_name: string; // 👈 əlavə et
 }
 
 export default function ExamResultsPage() {
@@ -53,6 +55,12 @@ export default function ExamResultsPage() {
                   User #{item.user_id}
                 </Tag>
                 <Tag color="green" className="text-sm">Session ID: {item.id}</Tag>
+              </div>
+
+              {/* ✅ Yeni Category badge */}
+              <div className="mb-3 flex items-center gap-2 text-gray-600">
+                <AppstoreOutlined className="text-gray-400" />
+                <Tag color="purple">{item.category_name}</Tag>
               </div>
 
               <div className="mb-3 text-gray-600 flex items-center gap-2">
