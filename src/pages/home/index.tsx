@@ -31,7 +31,7 @@ export default function StartTestPage() {
     })
   }, []);
 
-  console.log(categories, "categories");
+  
 
   return (
     <div>

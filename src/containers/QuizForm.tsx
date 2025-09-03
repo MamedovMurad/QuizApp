@@ -9,9 +9,10 @@ import parse from "html-react-parser";
 interface QuizFormProps {
   questions: Question[];
   onFinish?: (allAnswers: Record<number, any>) => void; // callback on finish
+  session: { created_at: string; expired_minute: string };
 }
 
-export default function QuizForm({ questions, onFinish }: QuizFormProps) {
+export default function QuizForm({ questions, onFinish ,session}: QuizFormProps) {
   // countdown state
   const [timeLeft, setTimeLeft] = useState(100 * 60); // 100 dəqiqə = 6000 saniyə
 
@@ -30,36 +31,28 @@ export default function QuizForm({ questions, onFinish }: QuizFormProps) {
     return [h, m, s].map((val) => String(val).padStart(2, "0")).join(":");
   };
 
-  // timer setup with localStorage
   useEffect(() => {
-    const totalTime = 100 * 60; // ✅ 100 dəqiqə = 6000 saniyə
-    const storedStart = localStorage.getItem("quiz_start_time");
-    let startTime: number;
+  const startTime = new Date(session.created_at).getTime(); // UTC formatı gəlir
+  const expireMs = parseInt(session.expired_minute, 10) * 60 * 1000; // dəqiqəni ms çevir
+  const endTime = startTime + expireMs;
 
-    if (storedStart) {
-      startTime = parseInt(storedStart, 10);
+  const timer = setInterval(() => {
+    const now = Date.now();
+    const remaining = Math.floor((endTime - now) / 1000); // saniyə ilə qalıq vaxt
+
+    if (remaining <= 0) {
+      clearInterval(timer);
+      setTimeLeft(0);
+      // Avtomatik submit
+      // onSubmit();
     } else {
-      startTime = Date.now();
-      localStorage.setItem("quiz_start_time", startTime.toString());
+      setTimeLeft(remaining);
     }
+  }, 1000);
 
-    const timer = setInterval(() => {
-      const elapsed = Math.floor((Date.now() - startTime) / 1000);
-      const remaining = totalTime - elapsed;
+  return () => clearInterval(timer);
+}, [session]);
 
-      if (remaining <= 0) {
-        clearInterval(timer);
-        setTimeLeft(0);
-        localStorage.removeItem("quiz_start_time");
-        // avtomatik olaraq submit etsin
-        // onSubmit();
-      } else {
-        setTimeLeft(remaining);
-      }
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
 
   // Reset and set form values when question changes
   useEffect(() => {

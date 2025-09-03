@@ -42,6 +42,9 @@ const getResults = (id: string | number) => {
   return api.get("/get-results/" + id)
 }
 
+const getCreatedAtSession = (token:string)=>{
+  return api.get("/session-create/"+token)
+}
 const getCategories = () => {
   return api.get("/categories")
 }
@@ -81,5 +84,6 @@ export {
   updategroup,
   deletegroup,
   updateQuiz,
-  deleteQuiz
+  deleteQuiz,
+  getCreatedAtSession
 }

@@ -6,7 +6,7 @@ import { Layout, Typography, message } from "antd";
 import type { Question } from "../../models/quiz";
 import QuizForm from "../../containers/QuizForm";
 import { useNavigate, useParams } from "react-router-dom";
-import { getQuizes, postQuizes } from "../../api/quiz";
+import { getCreatedAtSession, getQuizes, postQuizes } from "../../api/quiz";
 
 
 
@@ -18,25 +18,36 @@ function QuizPage() {
   const navigate = useNavigate()
   const { token } = useParams<{ token: string }>();
   const [questions, setQuestions] = useState<Question[] | null>(null);
+  const [session, setSession] = useState<{ created_at: string; expired_minute: string } | null>(null);
+
+
+
   const handleComplete = (answers: Record<string, any>) => {
-    console.log('Final Answers:', answers);
-if (token) {
-   postQuizes(token,answers).then(()=>{
-    message.success('Successfully inserted!')
-      navigate("/quiz/results")
-   })
-}
-   
+
+    if (token) {
+      postQuizes(token, answers).then(() => {
+        message.success('Successfully inserted!')
+        navigate("/quiz/results")
+      })
+    }
+
   };
-console.log(token);
+
 
 
 
   useEffect(() => {
+    if (token) {
+      getCreatedAtSession(token).then((data) => {
+        console.log(data?.data);
+        
+        setSession(data?.data); // created_at və expired_minute burada gəlir
+      });
+    }
+
     getQuizes(token || "").then((data) => {
       const list = data.data || [];
       if (!list.length) {
-        // boşdursa ana səhifəyə qaytar
         navigate("/", { replace: true });
       } else {
         setQuestions(list);
@@ -50,7 +61,7 @@ console.log(token);
         <Title level={3} style={{ color: "#fff", margin: 0 }}>Quiz App</Title>
       </Header>
       <Content style={{ padding: 24 }}>
-       {questions&& <QuizForm questions={questions} onFinish={handleComplete} />}
+        {questions && session && <QuizForm questions={questions} onFinish={handleComplete} session={session} />}
 
       </Content>
     </Layout>
