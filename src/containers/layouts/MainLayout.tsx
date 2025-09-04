@@ -19,6 +19,7 @@ import {
   AppstoreOutlined,
   DollarOutlined,
   TagOutlined,
+  MailOutlined,
 } from '@ant-design/icons';
 import { useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useAuthContext } from '../../context/AuthProvider';
@@ -227,12 +228,13 @@ const menuItems = allMenuItems?.filter(item => {
         <Footer className="text-center text-gray-500 text-sm py-2">
           © {new Date().getFullYear()} QuizApp. All rights reserved.
         </Footer>
-             <div
-          className="fixed bottom-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg cursor-pointer hover:bg-blue-700 transition"
-          onClick={() => (window.location.href = "mailto:info@dataexamhub.com")}
-        >
-          Support: info@dataexamhub.com
-        </div>
+<div
+  className="fixed bottom-4 right-4 bg-gray-300 text-gray-800 px-4 py-4 rounded-md  shadow-lg cursor-pointer hover:bg-blue-600 hover:text-white transition flex items-center gap-2"
+  onClick={() => (window.location.href = "mailto:info@dataexamhub.com")}
+>
+  <MailOutlined />
+  <span className="font-medium">Need help? Contact us</span>
+</div>
       </Layout>
     </Layout>
   );

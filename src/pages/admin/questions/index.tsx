@@ -14,7 +14,7 @@ const Questions: React.FC = () => {
 
     const [data, setData] = useState<QuestionResponse[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const [categories, setCategories] = useState<{ id: number; name: string }[]>([]); // 🆕 state
+    const [categories, setCategories] = useState<{ id: number; title: string }[]>([]); // 🆕 state
 
     const [pagination, setPagination] = useState<TablePaginationConfig>({
         current: Number(searchParams.get("page")) || 1,
@@ -184,7 +184,7 @@ const Questions: React.FC = () => {
                     >
                         {categories.map((cat) => (
                             <Option key={cat.id} value={cat.id.toString()}>
-                                {cat.name}
+                                {cat.title}
                             </Option>
                         ))}
                     </Select>
