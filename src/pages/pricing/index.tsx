@@ -1,6 +1,6 @@
 import { useEffect, useState, type FunctionComponent } from "react";
 import { getPricings, makePayment } from "../../api/pricing";
-import { message, Spin, Input } from "antd";
+import { message, Spin, Input, Modal, Checkbox } from "antd";
 
 interface Pricing {
   id: number;
@@ -16,6 +16,9 @@ const PricingPage: FunctionComponent<PricingPageProps> = () => {
   const [data, setData] = useState<Pricing[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [promoCodes, setPromoCodes] = useState<Record<number, string>>({});
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [termsVisible, setTermsVisible] = useState<boolean>(false);
+  const [accepted, setAccepted] = useState<boolean>(false);
 
   useEffect(() => {
     setLoading(true);
@@ -31,14 +34,22 @@ const PricingPage: FunctionComponent<PricingPageProps> = () => {
       });
   }, []);
 
-  function handleMakePayment(id: number) {
-    const code = promoCodes[id] || "";
+  function confirmPayment(id: number) {
+    setSelectedId(id);
+    setAccepted(false); // hər dəfə sıfırlansın
+    setTermsVisible(true);
+  }
+
+  function handleMakePayment() {
+    if (!selectedId) return;
+    const code = promoCodes[selectedId] || "";
 
     message.loading({ content: "Loading...", key: "loading" });
 
-    makePayment(id,  code ) // hər kartın promo kodu ayrıca göndərilir
+    makePayment(selectedId, code)
       .then((data) => {
         message.destroy("loading");
+        setTermsVisible(false);
 
         if (data?.data?.payment_url) {
           window.location.href = data.data.payment_url;
@@ -90,7 +101,7 @@ const PricingPage: FunctionComponent<PricingPageProps> = () => {
                     [item.id]: e.target.value,
                   }))
                 }
-                className=" rounded-xl"
+                className="rounded-xl"
               />
             </div>
 
@@ -99,7 +110,7 @@ const PricingPage: FunctionComponent<PricingPageProps> = () => {
                 ${item.price}
               </p>
               <button
-                onClick={() => handleMakePayment(item.id)}
+                onClick={() => confirmPayment(item.id)}
                 className="mt-4 w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition-colors duration-200"
               >
                 Buy Now
@@ -108,6 +119,64 @@ const PricingPage: FunctionComponent<PricingPageProps> = () => {
           </div>
         ))}
       </div>
+
+      {/* Terms Modal */}
+      <Modal
+        title="Terms of Use"
+        open={termsVisible}
+        onCancel={() => setTermsVisible(false)}
+        footer={null}
+      >
+        <div className="max-h-60 overflow-y-auto mb-4 text-gray-700 space-y-3">
+          <p>
+            <strong>No Legal Claims</strong> <br />
+            Users cannot make any legal claims or take legal action against the
+            website owner regarding the use of the website, its content, or any
+            technical issues.
+          </p>
+          <p>
+            For technical problems, users must contact{" "}
+            <a
+              href="mailto:info@dataexamhub.com"
+              className="text-blue-600 underline"
+            >
+              info@dataexamhub.com
+            </a>
+            . A response will be provided within 14 days.
+          </p>
+          <p>
+            <strong>No Refunds</strong> <br />
+            All payments are final and non-refundable.
+          </p>
+          <p>
+            <strong>No Sharing of Content</strong> <br />
+            Exam questions and other materials provided on this website must not
+            be shared, copied, or distributed on external websites, social
+            media, or in training materials.
+          </p>
+        </div>
+
+        <Checkbox
+          checked={accepted}
+          onChange={(e) => setAccepted(e.target.checked)}
+        >
+          I accept the Terms of Use
+        </Checkbox>
+
+        <div className="mt-4 flex justify-end">
+          <button
+            disabled={!accepted}
+            onClick={handleMakePayment}
+            className={`px-4 py-2 rounded-xl text-white ${
+              accepted
+                ? "bg-blue-600 hover:bg-blue-700"
+                : "bg-gray-400 cursor-not-allowed"
+            }`}
+          >
+            Continue to Payment
+          </button>
+        </div>
+      </Modal>
     </main>
   );
 };
