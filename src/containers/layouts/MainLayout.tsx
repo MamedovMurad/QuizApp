@@ -229,7 +229,7 @@ const menuItems = allMenuItems?.filter(item => {
           © {new Date().getFullYear()} QuizApp. All rights reserved.
         </Footer>
 <div
-  className="fixed bottom-4 right-4 bg-gray-300 text-gray-800 px-4 py-4 rounded-md  shadow-lg cursor-pointer hover:bg-blue-600 hover:text-white transition flex items-center gap-2"
+  className="fixed bottom-4 right-4 bg-white shadow-2xl text-gray-800 px-4 py-4 rounded-md  border border-[#91919184] cursor-pointer hover:bg-blue-600 hover:text-white transition flex items-center gap-2"
   onClick={() => (window.location.href = "mailto:info@dataexamhub.com")}
 >
   <MailOutlined />

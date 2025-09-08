@@ -13,7 +13,7 @@ export default function StartTestPage() {
 
   const startQuiz = (id: string | number) => {
     if (user?.status!=="active"&&user?.role!=="admin") {
-       messageApi.error("Aktiv imtahan paketiniz yoxdur!")
+   messageApi.error("You don’t have an active exam package!")
        navigate("/pricing")
        return
     }
