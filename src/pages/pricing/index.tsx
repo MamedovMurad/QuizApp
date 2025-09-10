@@ -8,9 +8,10 @@ interface Pricing {
   description: string;
   price: number;
   count: number;
+  category_id?: string;
 }
 
-interface PricingPageProps {}
+interface PricingPageProps { }
 
 const PricingPage: FunctionComponent<PricingPageProps> = () => {
   const [data, setData] = useState<Pricing[]>([]);
@@ -83,9 +84,17 @@ const PricingPage: FunctionComponent<PricingPageProps> = () => {
             className="bg-white rounded-2xl shadow-lg p-6 flex flex-col justify-between hover:shadow-xl transition-shadow duration-300"
           >
             <div>
-              <h2 className="text-xl font-semibold mb-2 text-gray-800">
-                {item.title}
-              </h2>
+            <div className="flex justify-end">
+                  {item.category_id && (
+                  <span className="inline-block bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">
+                    {item.category_id}
+                  </span>
+                )}
+            </div>
+              <div className="flex items-center gap-2 mb-2">
+                <h2 className="text-xl font-semibold text-gray-800">{item.title}</h2>
+            
+              </div>
               <p className="text-gray-500 mb-3">{item.description}</p>
               <p className="text-sm text-gray-600 italic mb-3">
                 {item.count} exam attempt{item.count > 1 ? "s" : ""}
@@ -167,11 +176,10 @@ const PricingPage: FunctionComponent<PricingPageProps> = () => {
           <button
             disabled={!accepted}
             onClick={handleMakePayment}
-            className={`px-4 py-2 rounded-xl text-white ${
-              accepted
+            className={`px-4 py-2 rounded-xl text-white ${accepted
                 ? "bg-blue-600 hover:bg-blue-700"
                 : "bg-gray-400 cursor-not-allowed"
-            }`}
+              }`}
           >
             Continue to Payment
           </button>

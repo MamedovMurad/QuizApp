@@ -20,6 +20,7 @@ import {
   DollarOutlined,
   TagOutlined,
   MailOutlined,
+  CaretRightFilled,
 } from '@ant-design/icons';
 import { useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useAuthContext } from '../../context/AuthProvider';
@@ -61,6 +62,11 @@ const allMenuItems: MenuProps['items'] = [
         key: '/admin/pricings',
         label: 'Pricings',
         icon: <DollarOutlined />,
+      },
+          {
+        key: '/admin/categories',
+        label: 'categories',
+        icon: <CaretRightFilled />,
       },
           {
         key: '/admin/promos',
