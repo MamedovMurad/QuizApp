@@ -1,17 +1,8 @@
 import { useEffect, useState } from "react";
-import {
-  Table,
-  Button,
-  Modal,
-  Form,
-  Input,
-  message,
-} from "antd";
-import {
-  EditOutlined,
-} from "@ant-design/icons";
+import { Table, Button, Modal, Form, Input, message, Popconfirm, Space } from "antd";
+import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 
-import { getCategories, editCategories } from "../../../api/quiz";
+import { getCategories, editCategories, createCategories, deleteCategory } from "../../../api/quiz";
 
 interface Category {
   id: number;
@@ -51,14 +42,33 @@ const CategoriesList = () => {
     setModalVisible(true);
   };
 
+  const handleCreate = () => {
+    setEditingItem(null);
+    form.resetFields();
+    setModalVisible(true);
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      await deleteCategory(id);
+      message.success("Kateqoriya silindi");
+      fetchData();
+    } catch {
+      message.error("Silinərkən xəta baş verdi");
+    }
+  };
+
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
       if (editingItem?.id) {
         await editCategories(editingItem.id, values.title);
         message.success("Kateqoriya yeniləndi");
-        fetchData();
+      } else {
+        await createCategories(values.title);
+        message.success("Kateqoriya əlavə olundu");
       }
+      fetchData();
       setModalVisible(false);
     } catch {
       message.error("Xəta baş verdi");
@@ -82,20 +92,38 @@ const CategoriesList = () => {
       title: "Əməliyyatlar",
       dataIndex: "actions",
       render: (_: any, record: Category) => (
-        <Button
-          type="primary"
-          icon={<EditOutlined />}
-          onClick={() => handleEdit(record)}
-        >
-          Redaktə
-        </Button>
+        <Space>
+          <Button
+            type="primary"
+            icon={<EditOutlined />}
+            onClick={() => handleEdit(record)}
+          >
+            Redaktə
+          </Button>
+
+          <Popconfirm
+            title="Bu kateqoriyanı silmək istədiyinizə əminsiniz?"
+            okText="Bəli"
+            cancelText="Xeyr"
+            onConfirm={() => handleDelete(record.id)}
+          >
+            <Button danger icon={<DeleteOutlined />}>
+              Sil
+            </Button>
+          </Popconfirm>
+        </Space>
       ),
     },
   ];
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-semibold mb-4">Kateqoriyalar</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold">Kateqoriyalar</h2>
+        <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
+          Yeni Kateqoriya
+        </Button>
+      </div>
 
       <Table
         columns={columns}
@@ -106,7 +134,7 @@ const CategoriesList = () => {
       />
 
       <Modal
-        title="Kateqoriyanı redaktə et"
+        title={editingItem ? "Kateqoriyanı redaktə et" : "Yeni kateqoriya əlavə et"}
         open={modalVisible}
         onCancel={() => {
           setModalVisible(false);

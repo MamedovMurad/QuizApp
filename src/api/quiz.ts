@@ -48,9 +48,15 @@ const getCreatedAtSession = (token:string)=>{
 const getCategories = () => {
   return api.get("/categories")
 }
+const createCategories = (title:string) => {
+  return api.post("/admin/categories",{title})
+}
 const editCategories = (id:number|string,title:string) => {
   return api.put("/admin/categories/"+id,{title})
 }
+const deleteCategory = (id: string | number) => {
+  return api.delete("/admin/categories/" + id);
+};
 const postQuizes = (token: string, answers: Record<number, any>) => {
   return api.post('/submit-quiz/' + token, answers);
 };
@@ -89,5 +95,7 @@ export {
   updateQuiz,
   deleteQuiz,
   getCreatedAtSession,
-  editCategories
+  editCategories,
+  createCategories,
+  deleteCategory
 }

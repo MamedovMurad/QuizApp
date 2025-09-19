@@ -66,7 +66,7 @@ export default function StartTestPage() {
             return (
               <div
                 key={key}
-                className="bg-white shadow-2xl rounded-2xl p-8 max-w-lg w-full text-center space-y-6"
+                className="bg-white shadow-2xl rounded-2xl p-8 max-w-lg w-full text-center space-y-6 "
               >
                 <h4 className="text-3xl font-bold text-gray-800">{title}</h4>
                 {desc && <p className="text-gray-600 text-base italic">{desc}</p>}
